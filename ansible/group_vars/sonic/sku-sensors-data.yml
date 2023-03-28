@@ -7139,7 +7139,7 @@ sensors_checks:
       fan: []
       power: []
       temp: []
-    psu_skips: {}
+    psu_skips: {}       
     sensor_skip_per_version: {}
   x86_64-wistron_sw_to3200k-r0:
     alarms:

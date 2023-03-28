@@ -112,7 +112,7 @@ class SonicPortAliasMap():
 
         filename = self.get_portconfig_path(slotid, asic_id)
         if filename is None:
-            raise Exception("Something wrong when trying to find the portmap file, either the hwsku is not available or file location is not correct")
+            raise Exception("Something wrong when trying to find the portmap file, either the hwsku is not available or file location is not correct %s" % filename)
         with open(filename) as f:
             lines = f.readlines()
         alias_index = -1

@@ -133,8 +133,10 @@ def change_routes(action, ptf_ip, port, routes):
         if aspath:
             messages.append("{} route {} next-hop {} as-path [ {} ]".format(action, prefix, nexthop, aspath))
         else:
-            messages.append("{} route {} next-hop {}".format(action, prefix, nexthop))
-    wait_for_http(ptf_ip, port, timeout=60)
+            messages.append("announce route {} next-hop {}".format(prefix, nexthop))
+        #if len(messages) > 1000:
+        #    break
+    wait_for_http(ptf_ip, port, timeout=180)
     url = "http://%s:%d" % (ptf_ip, port)
     data = { "commands": ";".join(messages) }
     r = requests.post(url, data=data, timeout=90)
@@ -363,7 +365,6 @@ def generate_routes(family, podset_number, tor_number, tor_subnet_number,
                     routes.append((prefix, nexthop, aspath))
                 if family in ["v6", "both"]:
                     routes.append((prefix_v6, nexthop_v6, aspath))
-
     return routes
 
 

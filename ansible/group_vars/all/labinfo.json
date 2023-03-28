@@ -10,12 +10,13 @@
         "Arista-VM": "Arista",
         "Nexus-3064-NX": "Nexus",
         "Force10-S6100": "Force10",
-        "Force10-S6000": "Force10"
+        "Force10-S6000": "Force10",
+	"C9364C": "Nexus"
     },
     "switch_login": {
         "Nexus": { 
             "user": "admin",
-            "passwd": ["password"], 
+            "passwd": ["roZes@123","password"], 
             "enable": null
         },
         "Arista": {

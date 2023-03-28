@@ -1,6 +1,6 @@
 - name: set possible reboot types
   set_fact:
-    reboot_types: ["reboot", "fast-reboot", "warm-reboot" ]
+    reboot_types: ["reboot", "fast-reboot", "warm-reboot", "reload.py ALL" ]
 
 - name: set default value for reboot type
   set_fact:

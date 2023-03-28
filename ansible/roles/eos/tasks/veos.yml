@@ -8,7 +8,7 @@
   become: yes
 
 - name: Set EOS backplane port name
-  set_fact: bp_ifname="Ethernet{{ fp_num.stdout|int + 1 }}"
+  set_fact: bp_ifname="Ethernet5"
 
 - name: copy rc.eos
   copy: src=rc.eos

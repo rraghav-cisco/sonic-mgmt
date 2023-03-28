@@ -82,7 +82,7 @@ all:
     sonic:
       vars:
         mgmt_subnet_mask_length: 24
-        ansible_connection: multi_passwd_ssh
+        ansible_connection: admin
         ansible_altpassword: YourPaSsWoRd
       hosts:
         vlab-01:

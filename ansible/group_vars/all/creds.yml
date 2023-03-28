@@ -1,5 +1,5 @@
 eos_default_login: "admin"
-eos_default_password: ""
+eos_default_password: "123456"
 eos_login: admin
 eos_password: 123456
 eos_root_user: root
@@ -16,11 +16,12 @@ cisco_login: "root"
 cisco_password: ""
 
 
-sonic_login: "admin"
+sonic_login: "cisco"
 sonic_default_passwords:
- - "YourPaSsWoRd"
- - "password"
-sonic_password: "password"
+ - "cisco123"
+sonic_password: "cisco123"
+sonicadmin_user: "cisco"
+sonicadmin_password: "cisco123"
 
 k8s_master_login: "ubuntu"
 k8s_master_password: "use_own_value"
@@ -28,6 +29,6 @@ k8s_master_password: "use_own_value"
 ptf_host_user: root
 ptf_host_pass: root
 
-vm_host_user: use_own_value
-vm_host_password: use_own_value
-vm_host_become_password: use_own_value
+vm_host_user: sonic
+vm_host_password: roZes@123
+vm_host_become_password: roZes@123

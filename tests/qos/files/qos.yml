@@ -3545,7 +3545,7 @@ qos_params:
             cell_size: 384
         topo-t2:
             100000_300m:
-                pkts_num_leak_out: 8
+                pkts_num_leak_out: 0
                 xoff_1:
                     dscp: 3
                     ecn: 1
@@ -3553,7 +3553,7 @@ qos_params:
                     pkts_num_trig_pfc: 10300
                     pkts_num_trig_ingr_drp: 10589
                     packet_size: 1350
-                    pkts_num_margin: 4
+                    pkts_num_margin: 10
                 xoff_2:
                     dscp: 4
                     ecn: 1
@@ -3561,9 +3561,9 @@ qos_params:
                     pkts_num_trig_pfc: 10300
                     pkts_num_trig_ingr_drp: 10589
                     packet_size: 1350
-                    pkts_num_margin: 4
+                    pkts_num_margin: 10
             400000_300m:
-                pkts_num_leak_out: 10
+                pkts_num_leak_out: 0
                 xoff_1:
                     dscp: 3
                     ecn: 1
@@ -3571,7 +3571,7 @@ qos_params:
                     pkts_num_trig_pfc: 9923
                     pkts_num_trig_ingr_drp: 10589
                     packet_size: 1350
-                    pkts_num_margin: 4
+                    pkts_num_margin: 10
                 xoff_2:
                     dscp: 4
                     ecn: 1
@@ -3579,7 +3579,7 @@ qos_params:
                     pkts_num_trig_pfc: 9923
                     pkts_num_trig_ingr_drp: 10589
                     packet_size: 1350
-                    pkts_num_margin: 4
+                    pkts_num_margin: 10
     jr2:
         topo-any:
             100000_300m:

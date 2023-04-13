@@ -32,7 +32,8 @@ from switch import (switch_init,
                     sai_thrift_read_pg_shared_watermark,
                     sai_thrift_read_buffer_pool_watermark,
                     sai_thrift_read_headroom_pool_watermark,
-                    sai_thrift_read_queue_occupancy)
+                    sai_thrift_read_queue_occupancy,
+                    sai_thrift_read_pg_occupancy)
 from switch_sai_thrift.ttypes import (sai_thrift_attribute_value_t,
                                       sai_thrift_attribute_t)
 from switch_sai_thrift.sai_headers import (SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID,
@@ -214,12 +215,12 @@ def fill_leakout_plus_one(test_case, src_port_id, dst_port_id, pkt, queue, asic_
     # Returns whether 1 packet was successfully enqueued.
     if asic_type in ['cisco-8000']:
         queue_counters_base = sai_thrift_read_queue_occupancy(
-            test_case.dst_client, dst_port_id)
+            test_case.dst_client, 'dst', dst_port_id)
         max_packets = 500
         for packet_i in range(max_packets):
             send_packet(test_case, src_port_id, pkt, 1)
             queue_counters = sai_thrift_read_queue_occupancy(
-                test_case.clients['dst'], dst_port_id)
+                test_case.clients['dst'], 'dst', dst_port_id)
             if queue_counters[queue] > queue_counters_base[queue]:
                 print("fill_leakout_plus_one: Success, sent %d packets, queue occupancy bytes rose from %d to %d" % (
                     packet_i + 1, queue_counters_base[queue], queue_counters[queue]), file=sys.stderr)
@@ -231,16 +232,16 @@ def fill_egress_plus_one(test_case, src_port_id, pkt, queue, asic_type, pkts_num
     # Attempts to queue 1 packet while compensating for a varying packet leakout and egress queue.
     # Returns whether 1 packet was successfully enqueued in ingress asic.
     if asic_type in ['cisco-8000']:
-        pg_cntrs_base=sai_thrift_read_pg_counters(
-            test_case.src_client, src_port_id)
+        pg_cntrs_base=sai_thrift_read_pg_occupancy(
+            test_case.src_client, 'src', src_port_id)
         send_packet(test_case, src_port_id, pkt, pkts_num_egr_mem)
         max_packets = 500
         for packet_i in range(max_packets):
             send_packet(test_case, src_port_id, pkt, 1)
-            pg_cntrs=sai_thrift_read_pg_counters(
-                test_case.src_client, src_port_id)
+            pg_cntrs=sai_thrift_read_pg_occupancy(
+                test_case.src_client, 'src', src_port_id)
             if pg_cntrs[queue] > pg_cntrs_base[queue]:
-                print("fill_egress_plus_one: Success, sent %d packets, pg counter bytes rose from %d to %d" % (
+                print("fill_egress_plus_one: Success, sent %d packets, SQ occupancy bytes rose from %d to %d" % (
                     pkts_num_egr_mem + packet_i + 1, pg_cntrs_base[queue], pg_cntrs[queue]), file=sys.stderr)
                 return True
     return False
@@ -1730,6 +1731,9 @@ class PFCXonTest(sai_base_test.ThriftInterfaceDataPlane):
         if 'pkts_num_egr_mem' in list(self.test_params.keys()):
             pkts_num_egr_mem = int(self.test_params['pkts_num_egr_mem'])
 
+        if 'is_multi_asic' in list(self.test_params.keys()):
+            is_multi_asic = bool(self.test_params['is_multi_asic'])
+
         step_id = 1
         step_desc = 'disable TX for dst_port_id, dst_port_2_id, dst_port_3_id'
         sys.stderr.write('step {}: {}\n'.format(step_id, step_desc))
@@ -1776,7 +1780,7 @@ class PFCXonTest(sai_base_test.ThriftInterfaceDataPlane):
                      pkts_num_dismiss_pfc - hysteresis) // cell_occupancy
                 )
             elif 'cisco-8000' in asic_type:
-                if get_src_dst_asic_and_duts['src_asic'] == get_src_dst_asic_and_duts['dst_asic']:
+                if not is_multi_asic:
                     assert(fill_leakout_plus_one(self, src_port_id, dst_port_id,
                         pkt, int(self.test_params['pg']), asic_type))
                 else:
@@ -1815,7 +1819,7 @@ class PFCXonTest(sai_base_test.ThriftInterfaceDataPlane):
                      hysteresis) // cell_occupancy + margin - 1
                 )
             elif 'cisco-8000' in asic_type:
-                if get_src_dst_asic_and_duts['src_asic'] == get_src_dst_asic_and_duts['dst_asic']:
+                if not is_multi_asic:
                     assert(fill_leakout_plus_one(self, src_port_id, dst_port_2_id,
                         pkt2, int(self.test_params['pg']), asic_type))
                     send_packet(
@@ -1853,7 +1857,7 @@ class PFCXonTest(sai_base_test.ThriftInterfaceDataPlane):
                 send_packet(self, src_port_id, pkt3,
                             pkts_num_egr_mem + pkts_num_leak_out + 1)
             elif 'cisco-8000' in asic_type:
-                if get_src_dst_asic_and_duts['src_asic'] == get_src_dst_asic_and_duts['dst_asic']:
+                if not is_multi_asic:
                     assert(fill_leakout_plus_one(self, src_port_id, dst_port_3_id,
                         pkt3, int(self.test_params['pg']), asic_type))
                     send_packet(self, src_port_id, pkt3, pkts_num_leak_out)

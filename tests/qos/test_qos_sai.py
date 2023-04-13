@@ -511,10 +511,7 @@ class TestQosSai(QosSaiBase):
         if 'cell_size' in qosConfig[xonProfile].keys():
             testParams["cell_size"] = qosConfig[xonProfile]["cell_size"]
 
-        if get_src_dst_asic_and_duts['src_asic'] == get_src_dst_asic_and_duts['dst_asic']:
-            testParams["is_multi_asic"] = False
-        else:
-            testParams["is_multi_asic"] = True
+        testParams["is_multi_asic"] = (get_src_dst_asic_and_duts['src_asic'] != get_src_dst_asic_and_duts['dst_asic'])
 
         self.runPtfTest(
             ptfhost, testCase="sai_qos_tests.PFCXonTest", testParams=testParams

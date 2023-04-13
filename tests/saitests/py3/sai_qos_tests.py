@@ -229,8 +229,9 @@ def fill_leakout_plus_one(test_case, src_port_id, dst_port_id, pkt, queue, asic_
 
 
 def fill_egress_plus_one(test_case, src_port_id, pkt, queue, asic_type, pkts_num_egr_mem):
-    # Attempts to queue 1 packet while compensating for a varying packet leakout and egress queue.
-    # Returns whether 1 packet was successfully enqueued in ingress asic.
+    # Attempts to queue 1 packet while compensating for a varying packet leakout and egress queues.
+    # pkts_num_egr_mem is the number of packets in full egress queues, to provide an initial filling boost
+    # Returns whether 1 packet was successfully enqueued.
     if asic_type in ['cisco-8000']:
         pg_cntrs_base=sai_thrift_read_pg_occupancy(
             test_case.src_client, 'src', src_port_id)
@@ -661,7 +662,7 @@ class DscpToPgMapping(sai_base_test.ThriftInterfaceDataPlane):
         try:
             for pg, dscps in list(pg_dscp_map.items()):
                 pg_cntrs_base = sai_thrift_read_pg_counters(
-                    self.src_client, port_list['src'][src_port_id])
+                    self.src_client, 'src', port_list['src'][src_port_id])
 
                 # send pkts with dscps that map to the same pg
                 for dscp in dscps:
@@ -682,7 +683,7 @@ class DscpToPgMapping(sai_base_test.ThriftInterfaceDataPlane):
                 # validate pg counters increment by the correct pkt num
                 time.sleep(8)
                 pg_cntrs = sai_thrift_read_pg_counters(
-                    self.src_client, port_list['src'][src_port_id])
+                    self.src_client, 'src', port_list['src'][src_port_id])
                 print(pg_cntrs_base, file=sys.stderr)
                 print(pg_cntrs, file=sys.stderr)
                 print(list(map(operator.sub, pg_cntrs, pg_cntrs_base)),
@@ -881,7 +882,7 @@ class Dot1pToPgMapping(sai_base_test.ThriftInterfaceDataPlane):
         try:
             for pg, dot1ps in list(pg_dot1p_map.items()):
                 pg_cntrs_base = sai_thrift_read_pg_counters(
-                    self.src_client, port_list['src'][src_port_id])
+                    self.src_client, 'src', port_list['src'][src_port_id])
 
                 # send pkts with dot1ps that map to the same pg
                 for dot1p in dot1ps:
@@ -915,7 +916,7 @@ class Dot1pToPgMapping(sai_base_test.ThriftInterfaceDataPlane):
                 # validate pg counters increment by the correct pkt num
                 time.sleep(8)
                 pg_cntrs = sai_thrift_read_pg_counters(
-                    self.src_client, port_list['src'][src_port_id])
+                    self.src_client, 'src', port_list['src'][src_port_id])
                 print(pg_cntrs_base, file=sys.stderr)
                 print(pg_cntrs, file=sys.stderr)
                 print(list(map(operator.sub, pg_cntrs, pg_cntrs_base)),
@@ -1731,8 +1732,7 @@ class PFCXonTest(sai_base_test.ThriftInterfaceDataPlane):
         if 'pkts_num_egr_mem' in list(self.test_params.keys()):
             pkts_num_egr_mem = int(self.test_params['pkts_num_egr_mem'])
 
-        if 'is_multi_asic' in list(self.test_params.keys()):
-            is_multi_asic = bool(self.test_params['is_multi_asic'])
+        is_multi_asic = bool(self.test_params.get('is_multi_asic', False))
 
         step_id = 1
         step_desc = 'disable TX for dst_port_id, dst_port_2_id, dst_port_3_id'
@@ -3248,13 +3248,13 @@ class PGSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
         if sport_cntr == None:
             sport_cntr, _ = sai_thrift_read_port_counters(self.src_client, asic_type, port_list['src'][src_port_id])
         if sport_pg_cntr == None:
-            sport_pg_cntr = sai_thrift_read_pg_counters(self.src_client, port_list['src'][src_port_id])
+            sport_pg_cntr = sai_thrift_read_pg_counters(self.src_client, 'src', port_list['src'][src_port_id])
         if sport_pg_share_wm == None:
             sport_pg_share_wm = sai_thrift_read_pg_shared_watermark(self.src_client, asic_type, port_list['src'][src_port_id])
         if dport_cntr == None:
             dport_cntr, _ = sai_thrift_read_port_counters(self.dst_client, asic_type, port_list['dst'][dst_port_id])
         if dport_pg_cntr == None:
-            dport_pg_cntr = sai_thrift_read_pg_counters(self.dst_client, port_list['dst'][dst_port_id])
+            dport_pg_cntr = sai_thrift_read_pg_counters(self.dst_client, 'dst', port_list['dst'][dst_port_id])
         if dport_pg_share_wm == None:
             dport_pg_share_wm = sai_thrift_read_pg_shared_watermark(self.dst_client, asic_type, port_list['dst'][dst_port_id])
         stats_tbl.add_row(['base src port']
@@ -3350,8 +3350,8 @@ class PGSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
             pkts_num_egr_mem = int(self.test_params['pkts_num_egr_mem'])
 
         self.sai_thrift_port_tx_disable(self.dst_client, asic_type, [dst_port_id])
-        pg_cntrs_base = sai_thrift_read_pg_counters(self.src_client, port_list['src'][src_port_id])
-        dst_pg_cntrs_base = sai_thrift_read_pg_counters(self.dst_client, port_list['dst'][dst_port_id])
+        pg_cntrs_base = sai_thrift_read_pg_counters(self.src_client, 'src', port_list['src'][src_port_id])
+        dst_pg_cntrs_base = sai_thrift_read_pg_counters(self.dst_client, 'dst', port_list['dst'][dst_port_id])
         pg_shared_wm_res_base = sai_thrift_read_pg_shared_watermark(self.src_client, asic_type, port_list['src'][src_port_id])
         dst_pg_shared_wm_res_base = sai_thrift_read_pg_shared_watermark(self.dst_client, asic_type, port_list['dst'][dst_port_id])
 
@@ -3386,7 +3386,7 @@ class PGSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
                 dynamically_compensate_leakout(self.src_client, asic_type, sai_thrift_read_port_counters, port_list['dst'][dst_port_id], TRANSMITTED_PKTS, xmit_counters_history, self, src_port_id, pkt, 40)
 
             pg_cntrs = sai_thrift_read_pg_counters(
-                self.src_client, port_list['src'][src_port_id])
+                self.src_client, 'src', port_list['src'][src_port_id])
             pg_shared_wm_res = sai_thrift_read_pg_shared_watermark(
                 self.src_client, asic_type, port_list['src'][src_port_id])
             print("Received packets: %d" %
@@ -3450,7 +3450,7 @@ class PGSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
                 pg_shared_wm_res = sai_thrift_read_pg_shared_watermark(
                     self.src_client, asic_type, port_list['src'][src_port_id])
                 pg_cntrs = sai_thrift_read_pg_counters(
-                    self.src_client, port_list['src'][src_port_id])
+                    self.src_client, 'src', port_list['src'][src_port_id])
                 print("Received packets: %d" %
                       (pg_cntrs[pg] - pg_cntrs_base[pg]), file=sys.stderr)
 
@@ -3482,7 +3482,7 @@ class PGSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
             pg_shared_wm_res = sai_thrift_read_pg_shared_watermark(
                 self.src_client, asic_type, port_list['src'][src_port_id])
             pg_cntrs = sai_thrift_read_pg_counters(
-                self.src_client, port_list['src'][src_port_id])
+                self.src_client, 'src', port_list['src'][src_port_id])
             print("Received packets: %d" %
                   (pg_cntrs[pg] - pg_cntrs_base[pg]), file=sys.stderr)
 
@@ -3797,7 +3797,7 @@ class QSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
         if sport_cntr == None:
             sport_cntr, _ = sai_thrift_read_port_counters(self.src_client, asic_type, port_list['src'][src_port_id])
         if sport_pg_cntr == None:
-            sport_pg_cntr = sai_thrift_read_pg_counters(self.src_client, port_list['src'][src_port_id])
+            sport_pg_cntr = sai_thrift_read_pg_counters(self.src_client, 'src', port_list['src'][src_port_id])
         if None in [sport_pg_share_wm, sport_pg_headroom_wm, sport_que_share_wm]:
             sport_que_share_wm, sport_pg_share_wm, sport_pg_headroom_wm = \
                 sai_thrift_read_port_watermarks(self.src_client, port_list['src'][src_port_id])
@@ -3805,7 +3805,7 @@ class QSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
         if dport_cntr == None:
             dport_cntr, _ = sai_thrift_read_port_counters(self.dst_client, asic_type, port_list['dst'][dst_port_id])
         if dport_pg_cntr == None:
-            dport_pg_cntr = sai_thrift_read_pg_counters(self.dst_client, port_list['dst'][dst_port_id])
+            dport_pg_cntr = sai_thrift_read_pg_counters(self.dst_client, 'dst', port_list['dst'][dst_port_id])
         if None in [dport_pg_share_wm, dport_pg_headroom_wm, dport_que_share_wm]:
             dport_que_share_wm, dport_pg_share_wm, dport_pg_headroom_wm = \
                 sai_thrift_read_port_watermarks(self.src_client, port_list['dst'][dst_port_id])
@@ -3915,8 +3915,8 @@ class QSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
         recv_counters_base, _ = sai_thrift_read_port_counters(self.src_client, asic_type, port_list['src'][src_port_id])
         xmit_counters_base, _ = sai_thrift_read_port_counters(self.dst_client, asic_type, port_list['dst'][dst_port_id])
         self.sai_thrift_port_tx_disable(self.dst_client, asic_type, [dst_port_id])
-        pg_cntrs_base = sai_thrift_read_pg_counters(self.src_client, port_list['src'][src_port_id])
-        dst_pg_cntrs_base = sai_thrift_read_pg_counters(self.dst_client, port_list['dst'][dst_port_id])
+        pg_cntrs_base = sai_thrift_read_pg_counters(self.src_client, 'src', port_list['src'][src_port_id])
+        dst_pg_cntrs_base = sai_thrift_read_pg_counters(self.dst_client, 'dst', port_list['dst'][dst_port_id])
         q_wm_res_base, pg_shared_wm_res_base, pg_headroom_wm_res_base = sai_thrift_read_port_watermarks(self.src_client, port_list['src'][src_port_id])
         dst_q_wm_res_base, dst_pg_shared_wm_res_base, dst_pg_headroom_wm_res_base = sai_thrift_read_port_watermarks(self.dst_client, port_list['dst'][dst_port_id])
 
@@ -3953,7 +3953,7 @@ class QSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
             q_wm_res, pg_shared_wm_res, pg_headroom_wm_res=sai_thrift_read_port_watermarks(
                 self.dst_client, port_list['dst'][dst_port_id])
             pg_cntrs=sai_thrift_read_pg_counters(
-                self.src_client, port_list['src'][src_port_id])
+                self.src_client, 'src', port_list['src'][src_port_id])
             print("Init pkts num sent: %d, min: %d, actual watermark value to start: %d" % (
                 que_min_pkts_num, pkts_num_fill_min, q_wm_res[queue]), file=sys.stderr)
             print("Received packets: %d" %
@@ -4024,7 +4024,7 @@ class QSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
                 q_wm_res, pg_shared_wm_res, pg_headroom_wm_res=sai_thrift_read_port_watermarks(
                     self.dst_client, port_list['dst'][dst_port_id])
                 pg_cntrs=sai_thrift_read_pg_counters(
-                    self.src_client, port_list['src'][src_port_id])
+                    self.src_client, 'src', port_list['src'][src_port_id])
                 print("Received packets: %d" %
                       (pg_cntrs[queue] - pg_cntrs_base[queue]), file=sys.stderr)
                 print("lower bound: %d, actual value: %d, upper bound: %d" % ((expected_wm - margin)
@@ -4063,7 +4063,7 @@ class QSharedWatermarkTest(sai_base_test.ThriftInterfaceDataPlane):
             q_wm_res, pg_shared_wm_res, pg_headroom_wm_res=sai_thrift_read_port_watermarks(
                 self.dst_client, port_list['dst'][dst_port_id])
             pg_cntrs=sai_thrift_read_pg_counters(
-                self.src_client, port_list['src'][src_port_id])
+                self.src_client, 'src', port_list['src'][src_port_id])
             print("Received packets: %d" %
                   (pg_cntrs[queue] - pg_cntrs_base[queue]), file=sys.stderr)
             print("exceeded pkts num sent: %d, actual value: %d, lower bound: %d, upper bound: %d" % (

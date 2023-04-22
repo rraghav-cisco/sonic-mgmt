@@ -846,6 +846,30 @@ def sai_thrift_read_pg_counters(client, port_id):
     return pg_cntrs
 
 
+def sai_thrift_read_pg_occupancy(client, port_id):
+    pg_cntr_ids = [
+        SAI_INGRESS_PRIORITY_GROUP_STAT_CURR_OCCUPANCY_BYTES
+    ]
+
+    # fetch pg ids under port id
+    pg_ids = []
+    port_attrs = client.sai_thrift_get_port_attribute(port_id)
+    attrs = port_attrs.attr_list
+    for attr in attrs:
+        if attr.id == SAI_PORT_ATTR_INGRESS_PRIORITY_GROUP_LIST:
+            for pg_id in attr.value.objlist.object_id_list:
+                pg_ids.append(pg_id)
+
+    # get counter values of counter ids of interest under each pg
+    pg_cntrs = []
+    for pg_id in pg_ids:
+        cntr_vals = client.sai_thrift_get_pg_stats(
+            pg_id, pg_cntr_ids, len(pg_cntr_ids))
+        pg_cntrs.append(cntr_vals[0])
+
+    return pg_cntrs
+
+
 def sai_thrift_read_pg_drop_counters(client, port_id):
     pg_cntr_ids = [
         SAI_INGRESS_PRIORITY_GROUP_STAT_DROPPED_PACKETS
@@ -920,9 +944,9 @@ def sai_thrift_read_headroom_pool_watermark(client, buffer_pool_id):
     return wm_vals[0]
 
 
-def sai_thrift_read_queue_occupancy(client, target, port_id):
+def sai_thrift_read_queue_occupancy(client, port_id):
     queue_list = []
-    port_attr_list = client.sai_thrift_get_port_attribute(port_list[target][port_id])
+    port_attr_list = client.sai_thrift_get_port_attribute(port_id)
     attr_list = port_attr_list.attr_list
     for attribute in attr_list:
         if attribute.id == SAI_PORT_ATTR_QOS_QUEUE_LIST:

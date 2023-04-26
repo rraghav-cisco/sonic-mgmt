@@ -3525,18 +3525,18 @@ qos_params:
                     dscp: 3
                     ecn: 1
                     pg: 3
-                    pkts_num_trig_pfc: 11537
-                    pkts_num_trig_ingr_drp: 14469
+                    pkts_num_trig_pfc: 3204
+                    pkts_num_trig_ingr_drp: 6412
                     packet_size: 8140
-                    pkts_num_margin: 10
+                    pkts_num_margin: 20
                 xoff_2:
                     dscp: 4
                     ecn: 1
                     pg: 4
-                    pkts_num_trig_pfc: 11537
-                    pkts_num_trig_ingr_drp: 14469
+                    pkts_num_trig_pfc: 3204
+                    pkts_num_trig_ingr_drp: 6412
                     packet_size: 8140
-                    pkts_num_margin: 10
+                    pkts_num_margin: 20
             wrr:
                 ecn: 1
                 q0_num_of_pkts: 140
@@ -3644,30 +3644,30 @@ qos_params:
                     dscp: 3
                     ecn: 1
                     pg: 3
-                    pkts_num_trig_pfc: 12815
-                    pkts_num_trig_ingr_drp: 15747
+                    pkts_num_trig_pfc: 4481
+                    pkts_num_trig_ingr_drp: 7689
                     packet_size: 8140
-                    pkts_num_margin: 10
+                    pkts_num_margin: 20
                 xoff_2:
                     dscp: 4
                     ecn: 1
                     pg: 4
-                    pkts_num_trig_pfc: 12815
-                    pkts_num_trig_ingr_drp: 15747
+                    pkts_num_trig_pfc: 4481
+                    pkts_num_trig_ingr_drp: 7689
                     packet_size: 8140
-                    pkts_num_margin: 10
+                    pkts_num_margin: 20
                 xon_1:
                     dscp: 3
                     ecn: 1
                     pg: 3
-                    pkts_num_trig_pfc: 11537
+                    pkts_num_trig_pfc: 3203
                     pkts_num_dismiss_pfc: 23
                     packet_size: 8140
                 xon_2:
                     dscp: 4
                     ecn: 1
                     pg: 4
-                    pkts_num_trig_pfc: 11537
+                    pkts_num_trig_pfc: 3203
                     pkts_num_dismiss_pfc: 23
                     packet_size: 8140
     jr2:

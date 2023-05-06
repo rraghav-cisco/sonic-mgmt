@@ -578,6 +578,11 @@ class TestQosSai(QosSaiBase):
         if "packet_size" in qosConfig[LosslessVoqProfile].keys():
             testParams["packet_size"] = qosConfig[LosslessVoqProfile]["packet_size"]
 
+        if "pkts_num_egr_mem" in qosConfig.keys():
+            testParams["pkts_num_egr_mem"] = qosConfig["pkts_num_egr_mem"]
+
+        testParams["is_multi_asic"] = (get_src_dst_asic_and_duts['src_asic'] != get_src_dst_asic_and_duts['dst_asic'])
+
         self.runPtfTest(
             ptfhost, testCase="sai_qos_tests.LosslessVoq", testParams=testParams
         )
@@ -920,6 +925,8 @@ class TestQosSai(QosSaiBase):
 
         if "packet_size" in qosConfig[bufPool].keys():
             testParams["packet_size"] = qosConfig[bufPool]["packet_size"]
+
+        testParams["is_multi_asic"] = (get_src_dst_asic_and_duts['src_asic'] != get_src_dst_asic_and_duts['dst_asic'])
 
         self.runPtfTest(
             ptfhost, testCase="sai_qos_tests.BufferPoolWatermarkTest",
@@ -1396,6 +1403,8 @@ class TestQosSai(QosSaiBase):
         if "internal_hdr_size" in qosConfig.keys():
             testParams["internal_hdr_size"] = qosConfig["internal_hdr_size"]
 
+        testParams["is_multi_asic"] = (get_src_dst_asic_and_duts['src_asic'] != get_src_dst_asic_and_duts['dst_asic'])
+
         self.runPtfTest(
             ptfhost, testCase="sai_qos_tests.PGSharedWatermarkTest",
             testParams=testParams
@@ -1513,6 +1522,11 @@ class TestQosSai(QosSaiBase):
             testParams["platform_asic"] = dutTestParams["basicParams"]["platform_asic"]
         else:
             testParams["platform_asic"] = None
+
+        if 'cell_size' in qosConfig[pgDropKey].keys():
+            testParams["cell_size"] = qosConfig[pgDropKey]["cell_size"]
+
+        testParams["is_multi_asic"] = (get_src_dst_asic_and_duts['src_asic'] != get_src_dst_asic_and_duts['dst_asic'])
 
         self.runPtfTest(
             ptfhost, testCase="sai_qos_tests.PGDropTest", testParams=testParams

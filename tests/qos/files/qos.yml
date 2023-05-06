@@ -3521,6 +3521,15 @@ qos_params:
                     lossless_weight: 30
             100000_120000m:
                 pkts_num_leak_out: 0
+                pg_drop:
+                    dscp: 3
+                    ecn: 1
+                    pg: 3
+                    queue: 3
+                    pkts_num_trig_pfc: 262144
+                    pkts_num_trig_ingr_drp: 524288
+                    pkts_num_margin: 13267
+                    iterations: 100
                 xoff_1:
                     dscp: 3
                     ecn: 1
@@ -3551,6 +3560,38 @@ qos_params:
                     pkts_num_trig_pfc: 3201
                     pkts_num_dismiss_pfc: 2
                     packet_size: 8156
+                lossless_voq_1:
+                    dscp: 3
+                    ecn: 1
+                    pg: 3
+                    num_of_flows: 'multiple'
+                    pkts_num_trig_pfc: 3202
+                    pkts_num_margin: 4
+                    packet_size: 8156
+                lossless_voq_2:
+                    dscp: 4
+                    ecn: 1
+                    pg: 4
+                    num_of_flows: 'multiple'
+                    pkts_num_trig_pfc: 3202
+                    pkts_num_margin: 4
+                    packet_size: 8156
+                lossless_voq_3:
+                    dscp: 3
+                    ecn: 1
+                    pg: 3
+                    num_of_flows: 'single'
+                    pkts_num_trig_pfc: 3202
+                    pkts_num_margin: 4
+                    packet_size: 8156
+                lossless_voq_4:
+                    dscp: 4
+                    ecn: 1
+                    pg: 4
+                    num_of_flows: 'single'
+                    pkts_num_trig_pfc: 3202
+                    pkts_num_margin: 4
+                    packet_size: 8156
                 lossy_queue_1:
                     dscp: 8
                     ecn: 1
@@ -3578,6 +3619,15 @@ qos_params:
                     q5_num_of_pkts: 70
                     q6_num_of_pkts: 70
                     limit: 40
+                wm_pg_shared_lossless:
+                    dscp: 3
+                    ecn: 1
+                    pg: 3
+                    pkts_num_trig_pfc: 3201
+                    pkts_num_fill_min: 0
+                    pkts_num_margin: 4
+                    packet_size: 8156
+                    cell_size: 8192
             wrr:
                 ecn: 1
                 q0_num_of_pkts: 140
@@ -3681,6 +3731,15 @@ qos_params:
             100000_120000m:
                 pkts_num_leak_out: 0
                 pkts_num_egr_mem: 1276
+                pg_drop:
+                    dscp: 3
+                    ecn: 1
+                    pg: 3
+                    queue: 3
+                    pkts_num_trig_pfc: 262144
+                    pkts_num_trig_ingr_drp: 524288
+                    pkts_num_margin: 13267
+                    iterations: 100
                 xoff_1:
                     dscp: 3
                     ecn: 1
@@ -3711,6 +3770,38 @@ qos_params:
                     pkts_num_trig_pfc: 3202
                     pkts_num_dismiss_pfc: 4
                     packet_size: 8156
+                lossless_voq_1:
+                    dscp: 3
+                    ecn: 1
+                    pg: 3
+                    num_of_flows: 'multiple'
+                    pkts_num_trig_pfc: 3202
+                    pkts_num_margin: 4
+                    packet_size: 8156
+                lossless_voq_2:
+                    dscp: 4
+                    ecn: 1
+                    pg: 4
+                    num_of_flows: 'multiple'
+                    pkts_num_trig_pfc: 3202
+                    pkts_num_margin: 4
+                    packet_size: 8156
+                lossless_voq_3:
+                    dscp: 3
+                    ecn: 1
+                    pg: 3
+                    num_of_flows: 'single'
+                    pkts_num_trig_pfc: 3202
+                    pkts_num_margin: 4
+                    packet_size: 8156
+                lossless_voq_4:
+                    dscp: 4
+                    ecn: 1
+                    pg: 4
+                    num_of_flows: 'single'
+                    pkts_num_trig_pfc: 3202
+                    pkts_num_margin: 4
+                    packet_size: 8156
                 lossy_queue_1:
                     dscp: 8
                     ecn: 1
@@ -3738,6 +3829,15 @@ qos_params:
                     q5_num_of_pkts: 70
                     q6_num_of_pkts: 70
                     limit: 40
+                wm_pg_shared_lossless:
+                    dscp: 3
+                    ecn: 1
+                    pg: 3
+                    pkts_num_trig_pfc: 3201
+                    pkts_num_fill_min: 0
+                    pkts_num_margin: 4
+                    packet_size: 8156
+                    cell_size: 8192
     jr2:
         topo-any:
             100000_300m:

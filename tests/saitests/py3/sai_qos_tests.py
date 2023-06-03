@@ -251,9 +251,9 @@ def fill_egress_plus_one(test_case, src_port_id, pkt, queue, asic_type, pkts_num
 def overflow_egress(test_case, src_port_id, pkt, queue, asic_type):
     # Attempts to queue 1 packet while compensating for a varying packet leakout and egress queues.
     # Returns pkts_num_egr_mem: number of packets short of filling egress memory and leakout
-    # Returns extra_buffer_occupied: extra number of buffer occupied in source port
+    # Returns extra_bytes_occupied: extra number of bytes occupied in source port
     pkts_num_egr_mem = 0
-    extra_buffer_occupied = 0
+    extra_bytes_occupied = 0
     if asic_type in ['cisco-8000']:
         pg_cntrs_base=sai_thrift_read_pg_occupancy(
             test_case.src_client, port_list['src'][src_port_id])
@@ -266,8 +266,9 @@ def overflow_egress(test_case, src_port_id, pkt, queue, asic_type):
                 print("get_pkts_num_egr_mem: Success, sent %d packets, SQ occupancy bytes rose from %d to %d" % (
                     (cycle_i + 1) * 1000, pg_cntrs_base[queue], pg_cntrs[queue]), file=sys.stderr)
                 pkts_num_egr_mem = cycle_i * 1000
-                extra_buffer_occupied = pg_cntrs[queue] - pg_cntrs_base[queue]
-    return pkts_num_egr_mem, extra_buffer_occupied
+                extra_bytes_occupied = pg_cntrs[queue] - pg_cntrs_base[queue]
+                break
+    return pkts_num_egr_mem, extra_bytes_occupied
 
 
 class ARPpopulate(sai_base_test.ThriftInterfaceDataPlane):
@@ -3769,9 +3770,11 @@ class PGDropTest(sai_base_test.ThriftInterfaceDataPlane):
 
                 # Fill egress memory and leakout
                 if 'cisco-8000' in asic_type and is_multi_asic:
-                    pkts_num_egr_mem, extra_buffer_occupied = overflow_egress(self,
+                    pkts_num_egr_mem, extra_bytes_occupied = overflow_egress(self,
                                                     src_port_id, pkt, pg, asic_type)
-                    pkt_num -= extra_buffer_occupied * cell_size / (packet_length + 36)
+                    pkt_num -= extra_bytes_occupied // cell_size
+                    # TODO: for longlink, it will be
+                    # pkt_num -= extra_bytes_occupied // (packet_length + 36)
 
                 # Send packets to trigger PFC
                 print("Iteration {}/{}, sending {} packets to trigger PFC".format(

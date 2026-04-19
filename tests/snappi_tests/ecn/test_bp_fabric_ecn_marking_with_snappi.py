@@ -7,7 +7,7 @@ from tests.common.fixtures.conn_graph_facts import conn_graph_facts, fanout_grap
     fanout_graph_facts_multidut         # noqa: F401
 from tests.common.snappi_tests.snappi_fixtures import snappi_api_serv_ip, snappi_api_serv_port, \
     snappi_api, snappi_dut_base_config, get_snappi_ports, get_snappi_ports_for_rdma, cleanup_config, \
-    is_snappi_multidut, get_snappi_ports_multi_dut, get_snappi_ports_single_dut, 
+    is_snappi_multidut, get_snappi_ports_multi_dut, get_snappi_ports_single_dut,  \
     tgen_port_info, snappi_port_selection  # noqa: F401
 from tests.common.snappi_tests.qos_fixtures import prio_dscp_map, \
     lossless_prio_list, disable_pfcwd   # noqa: F401
@@ -25,7 +25,7 @@ def number_of_tx_rx_ports():
 
 
 @pytest.fixture
-def validate_snappi_ports(tgen_port_info):
+def validate_snappi_ports(tgen_port_info):    # noqa: F811
     '''
         To use Backplane and fabric ports for traffic
          - the ingress port and the egress port should be on diff DUT.
@@ -53,6 +53,7 @@ def validate_snappi_ports(tgen_port_info):
 
     pytest.skip("Invalid combination of tx and rx ports. Skip.")
 
+
 @pytest.fixture
 def supervisor_dut_cisco(duthosts):
     dut = next((duthost for duthost in duthosts if duthost.is_supervisor_node()), None)
@@ -71,7 +72,7 @@ def test_fabric_ecn_marking_lossless_prio(
                                 tbinfo,      # noqa: F811
                                 disable_pfcwd,     # noqa: F811
                                 prio_dscp_map,  # noqa: F811
-                                tgen_port_info,
+                                tgen_port_info,   # noqa: F811
                                 supervisor_dut_cisco,
                                 validate_snappi_ports
                                 ):                    # noqa: F811

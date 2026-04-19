@@ -9,7 +9,8 @@ from tests.common.fixtures.conn_graph_facts import conn_graph_facts, fanout_grap
 from tests.common.snappi_tests.snappi_fixtures import snappi_api_serv_ip, snappi_api_serv_port, \
     get_snappi_ports_single_dut, snappi_testbed_config, \
     get_snappi_ports_multi_dut, is_snappi_multidut, \
-    snappi_api, snappi_dut_base_config, get_snappi_ports, get_snappi_ports_for_rdma, cleanup_config      # noqa: F401
+    snappi_api, snappi_dut_base_config, get_snappi_ports, get_snappi_ports_for_rdma, cleanup_config,  \
+    tgen_port_info, snappi_port_selection   # noqa: F401
 from tests.common.snappi_tests.qos_fixtures import prio_dscp_map, \
     lossless_prio_list   # noqa: F401
 from tests.common.snappi_tests.read_pcap import is_ecn_marked
@@ -31,7 +32,7 @@ def test_red_accuracy(request,
                       fanout_graph_facts_multidut,               # noqa: F811
                       duthosts,
                       lossless_prio_list,     # noqa: F811
-                      setup_ports_and_dut,     # noqa: F811
+                      tgen_port_info,     # noqa: F811
                       tbinfo,      # noqa: F811
                       prio_dscp_map):                    # noqa: F811
     """
@@ -56,7 +57,7 @@ def test_red_accuracy(request,
     # if disable_test:
     #     pytest.skip("test_red_accuracy is disabled")
 
-    testbed_config, port_config_list, snappi_ports = setup_ports_and_dut
+    testbed_config, port_config_list, snappi_ports = tgen_port_info
 
     lossless_prio = random.sample(lossless_prio_list, 1)
     lossless_prio = int(lossless_prio[0])

@@ -9,7 +9,7 @@ from tests.common.snappi_tests.snappi_fixtures import snappi_api_serv_ip, snappi
     get_snappi_ports_single_dut, snappi_testbed_config, \
     get_snappi_ports_multi_dut, is_snappi_multidut, \
     snappi_api, snappi_dut_base_config, get_snappi_ports, get_snappi_ports_for_rdma, cleanup_config      # noqa: F401
-from tests.snappi_tests.files.helper import setup_ports_and_dut   # noqa: F401
+from tests.snappi_tests.files.helper import tgen_port_info   # noqa: F401
 from tests.common.snappi_tests.qos_fixtures import prio_dscp_map, lossless_prio_list      # noqa: F401
 
 from tests.snappi_tests.ecn.files.helper import run_ecn_test
@@ -29,7 +29,6 @@ def test_dequeue_ecn(request,
                      get_snappi_ports,  # noqa: F811
                      tbinfo,      # noqa: F811
                      tgen_port_info,     # noqa: F811
-                     setup_ports_and_dut,   # noqa: F811
                      prio_dscp_map):                # noqa: F811
     """
     Test if the device under test (DUT) performs ECN marking at the egress
@@ -51,7 +50,7 @@ def test_dequeue_ecn(request,
         N/A
     """
 
-    testbed_config, port_config_list, snappi_ports = setup_ports_and_dut
+    testbed_config, port_config_list, snappi_ports = tgen_port_info
 
     lossless_prio = random.sample(lossless_prio_list, 1)
     lossless_prio = int(lossless_prio[0])

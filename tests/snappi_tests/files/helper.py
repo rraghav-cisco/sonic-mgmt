@@ -165,21 +165,10 @@ def setup_ports_and_dut(
 
 
 @pytest.fixture(params=['warm', 'cold', 'fast'])
-def reboot_duts(request, localhost):
-    """
-    Uses tgen_port_info if the test requested it, otherwise setup_ports_and_dut.
-    Once setup_ports_and_dut is removed, the code will be simplified to use tgen_port_info.
-    The code to be used the:
-    def reboot_duts(tgen_port_info, localhost, request):
-    """
+def reboot_duts(tgen_port_info, localhost, request):
     reboot_type = request.param
 
-    # Check for fixture used to generate port_info.
-    if 'tgen_port_info' in request.node.fixturenames:
-        port_info = request.getfixturevalue('tgen_port_info')
-    else:
-        port_info = request.getfixturevalue('setup_ports_and_dut')
-    _, _, snappi_ports = port_info
+    _, _, snappi_ports = tgen_port_info
 
     skip_warm_reboot(snappi_ports[0]['duthost'], reboot_type)
     skip_warm_reboot(snappi_ports[1]['duthost'], reboot_type)
@@ -212,8 +201,8 @@ def reboot_duts(request, localhost):
 
 
 @pytest.fixture(autouse=True)
-def enable_debug_shell(setup_ports_and_dut):  # noqa: F811
-    _, _, snappi_ports = setup_ports_and_dut
+def enable_debug_shell(tgen_port_info):  # noqa: F811
+    _, _, snappi_ports = tgen_port_info
     rx_duthost = snappi_ports[0]['duthost']
 
     if is_cisco_device(rx_duthost):
@@ -275,7 +264,7 @@ def get_fabric_mapping(duthost, asic=""):
     if asic and asic.namespace:
         asic_namespace = " --namespace {}".format(asic.namespace)
     else:
-        pytest.skip("This test is only for multiAsic Platforms.")
+        pytest.skip(f"This test is only for multiAsic Platforms. Cannot run on:{duthost}")
 
     cmd = "show platform npu bp-interface-map" + asic_namespace
     result = duthost.shell(cmd)['stdout']

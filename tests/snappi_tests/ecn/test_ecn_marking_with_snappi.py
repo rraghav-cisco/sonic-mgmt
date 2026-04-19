@@ -6,10 +6,11 @@ from tests.common.fixtures.conn_graph_facts import conn_graph_facts, fanout_grap
     fanout_graph_facts_multidut         # noqa: F401
 from tests.common.snappi_tests.snappi_fixtures import snappi_api_serv_ip, snappi_api_serv_port, \
     snappi_api, snappi_dut_base_config, get_snappi_ports, get_snappi_ports_for_rdma, cleanup_config, \
-    is_snappi_multidut, get_snappi_ports_multi_dut, get_snappi_ports_single_dut   # noqa: F401
+    is_snappi_multidut, get_snappi_ports_multi_dut, get_snappi_ports_single_dut,
+    tgen_port_info, snappi_port_selection   # noqa: F401
 from tests.common.snappi_tests.qos_fixtures import prio_dscp_map, \
     lossless_prio_list, disable_pfcwd   # noqa: F401
-from tests.snappi_tests.files.helper import setup_ports_and_dut, enable_debug_shell  # noqa: F401
+from tests.snappi_tests.files.helper import multidut_port_info, enable_debug_shell  # noqa: F401
 from tests.snappi_tests.ecn.files.helper import run_ecn_marking_test, \
     run_ecn_marking_port_toggle_test, run_ecn_marking_ect_marked_pkts
 from tests.common.snappi_tests.snappi_test_params import SnappiTestParams
@@ -117,7 +118,7 @@ def validate_snappi_ports(snappi_ports):
     return False
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="module")
 def number_of_tx_rx_ports():
     yield (2, 1)
 

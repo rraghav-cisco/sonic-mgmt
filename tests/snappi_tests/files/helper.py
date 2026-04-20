@@ -264,7 +264,11 @@ def get_fabric_mapping(duthost, asic=""):
     if asic and asic.namespace:
         asic_namespace = " --namespace {}".format(asic.namespace)
     else:
+<<<<<<< HEAD
         pytest.skip(f"This test is only for multiAsic Platforms. Cannot run on:{duthost}")
+=======
+        pytest.skip("This test is only for multiAsic Platforms.")
+>>>>>>> master
 
     cmd = "show platform npu bp-interface-map" + asic_namespace
     result = duthost.shell(cmd)['stdout']

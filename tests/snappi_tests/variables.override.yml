@@ -1,6 +1,11 @@
 yy40-mixed-tb:
   multidut_port_info:
-    - multi-dut-single-asic-dir1:
+    - multi-dut-single-asic:
+        rx_ports:
+          - hostname: sonic-s6100-dut1
+            port_name: Ethernet72
+          - hostname: sonic-s6100-dut2
+            port_name: Ethernet76
         tx_ports:
           - hostname: yy40-mixed-short
             port_name: Ethernet128

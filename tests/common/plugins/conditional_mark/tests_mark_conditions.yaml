@@ -5003,6 +5003,12 @@ snappi_tests/lacp:
     conditions:
       - "'2025' in release"
 
+snappi_tests/lacp:
+  skip:
+    reason: "Skipping dash on 2025 releases"
+    conditions:
+      - "'2025' in release"
+
 snappi_tests/pfc/test_global_pause_with_snappi.py:
   skip:
     reason: "Global pause is not supported in cisco-8000. / Snappi test only support on physical tgen testbed"

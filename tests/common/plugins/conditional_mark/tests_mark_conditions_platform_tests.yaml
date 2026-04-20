@@ -1419,7 +1419,7 @@ platform_tests/test_reboot.py::test_continuous_reboot:
 
 platform_tests/test_reboot.py::test_fast_reboot:
   skip:
-    reason: "Skip test_fast_reboot for M*/t1/t2 / Fast reboot is broken on dualtor topology. Skipping for now. / Skip for smartswitch topology."
+    reason: "Skip test_fast_reboot for M*/t1/t2 / Fast reboot is broken on dualtor topology. Its not supported in vpp platform. Skipping for now. / Skip for smartswitch topology."
     conditions_logical_operator: or
     conditions:
       - "topo_type in ['m0', 'mx', 'm1', 't1', 't2', 'lt2', 'ft2']"
@@ -1427,6 +1427,7 @@ platform_tests/test_reboot.py::test_fast_reboot:
       - "'isolated' in topo_name"
       - "is_smartswitch==True"
       - "'f2' in topo_name"
+      - "asic_type in ['vpp']"
   xfail:
     reason: "case failed and waiting for fix"
     conditions:
@@ -1446,7 +1447,7 @@ platform_tests/test_reboot.py::test_soft_reboot:
 
 platform_tests/test_reboot.py::test_warm_reboot:
   skip:
-    reason: "Skip test_warm_reboot for M*/t1/t2/lt2/ft2. Warm reboot is broken on dualtor topology. Skipping for now."
+    reason: "Skip test_warm_reboot for M*/t1/t2/lt2/ft2. Warm reboot is broken on dualtor topology. Its not supported in vpp platform. Skipping for now."
     conditions_logical_operator: or
     conditions:
       - "topo_type in ['m0', 'mx', 'm1', 't1', 't2', 'lt2', 'ft2']"
@@ -1454,6 +1455,7 @@ platform_tests/test_reboot.py::test_warm_reboot:
       - "hwsku in ['Arista-7050CX3-32S-C28S4']"
       - "'isolated' in topo_name"
       - "'f2' in topo_name"
+      - "asic_type in ['vpp']"
   xfail:
     reason: "case failed and waiting for fix"
     conditions:

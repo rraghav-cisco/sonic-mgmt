@@ -52,6 +52,8 @@ def validate_snappi_ports(tgen_port_info):    # noqa: F811
         return True
 
     pytest.skip("Invalid combination of tx and rx ports. Skip.")
+    # To overcome CodeQL mixed-returns error.
+    return False
 
 
 @pytest.fixture

@@ -1446,7 +1446,7 @@ platform_tests/test_reboot.py::test_soft_reboot:
 
 platform_tests/test_reboot.py::test_warm_reboot:
   skip:
-    reason: "Skip test_warm_reboot for M*/t1/t2/lt2/ft2/c*. Warm reboot is broken on dualtor topology. Its not supported in vpp platform. Skipping for now."
+    reason: "Skip test_warm_reboot for M*/t1/t2/lt2/ft2/c*. Warm reboot is broken on dualtor topology. Skipping for now."
     conditions_logical_operator: or
     conditions:
       - "topo_type in ['m0', 'mx', 'm1', 't1', 't2', 'lt2', 'ft2', 'c0']"

@@ -862,8 +862,9 @@ platform_tests/api/test_thermal.py::TestThermalApi::test_get_model:
     reason: "test_get_model is not supported in cisco and mellanox platform"
     conditions_logical_operator: or
     conditions:
-       - "asic_type in ['mellanox', 'cisco-8000', 'vs', 'vpp']"
+       - "asic_type in ['mellanox', 'cisco-8000', 'vs']"
        - "is_multi_asic==True and release in ['201911']"
+       - "platform.startswith('arm64-c8220tg_48a_o')"
 
 platform_tests/api/test_thermal.py::TestThermalApi::test_get_presence:
   skip:
@@ -880,8 +881,9 @@ platform_tests/api/test_thermal.py::TestThermalApi::test_get_serial:
     reason: "test_get_serial is not supported in cisco and mellanox platform"
     conditions_logical_operator: or
     conditions:
-       - "asic_type in ['mellanox', 'cisco-8000', 'vs', 'vpp']"
+       - "asic_type in ['mellanox', 'cisco-8000', 'vs']"
        - "is_multi_asic==True and release in ['201911']"
+       - "platform.startswith('arm64-c8220tg_48a_o')"
 
 platform_tests/api/test_thermal.py::TestThermalApi::test_get_status:
   skip:

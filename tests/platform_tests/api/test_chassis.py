@@ -476,6 +476,10 @@ class TestChassisApi(PlatformApiTestBase):
         pytest_assert(sfp_list is not None, "Failed to retrieve SFPs")
         pytest_assert(isinstance(sfp_list, list) and len(sfp_list) == num_sfps, "SFPs appear to be incorrect")
 
+        if duthost.facts.get("platform").startswith('arm64-c8220tg_48a_o'):
+            # Index 0 is not SFP in cisco-console.
+            list_sfps.pop(0)
+
         for i in range(len(list_sfps)):
             index = list_sfps[i]
             sfp = chassis.get_sfp(platform_api_conn, index)

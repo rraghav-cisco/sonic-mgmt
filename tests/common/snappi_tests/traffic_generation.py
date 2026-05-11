@@ -8,7 +8,7 @@ import re
 import pandas as pd
 from datetime import datetime
 
-from tests.common.helpers.assertions import pytest_assert
+from tests.common.helpers.assertions import pytest_assert, pytest_require
 from tests.common.snappi_tests.common_helpers import config_capture_settings, get_egress_queue_count, \
     pfc_class_enable_vector, get_lossless_buffer_size, get_pg_dropped_packets, \
     sec_to_nanosec, get_pfc_frame_count, packet_capture, get_tx_frame_count, get_rx_frame_count, \
@@ -99,8 +99,9 @@ def setup_base_traffic_config(testbed_config,
         tx_port_id_list, _ = select_ports(port_config_list=port_config_list,
                                           pattern="many to one",
                                           rx_port_id=rx_port_id)
-        pytest_assert(len(tx_port_id_list) >= num_tx_ports,
-                      f"Cannot find enough TX ports. Need {num_tx_ports}, found {len(tx_port_id_list)}")
+        pytest_require(
+            len(tx_port_id_list) >= num_tx_ports,
+            f"Cannot find enough TX ports. Need {num_tx_ports}, found {len(tx_port_id_list)}")
         tx_port_id_list = select_tx_port(tx_port_id_list=tx_port_id_list,
                                          rx_port_id=rx_port_id,
                                          num_tx_ports=num_tx_ports)

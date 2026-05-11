@@ -60,7 +60,10 @@ def snappi_api_serv_port(tbinfo, duthosts, rand_one_dut_hostname):
 
 @pytest.fixture(scope='module')
 def snappi_api(snappi_api_serv_ip,
-               snappi_api_serv_port):
+               snappi_api_serv_port,
+               duthosts,
+               rand_one_dut_hostname
+               ):
     """
     Fixture for session handle,
     for creating snappi objects and making API calls.
@@ -73,9 +76,16 @@ def snappi_api(snappi_api_serv_ip,
     # Going forward, we should be able to specify extension
     # from command line while running pytest.
     api = snappi.api(location=location, ext="ixnetwork")
-    # TODO - Uncomment to use. Prefer to use environment vars to retrieve this information
-    # api._username = "<please mention the username if other than default username>"
-    # api._password = "<please mention the password if other than default password>"
+    duthost = duthosts[rand_one_dut_hostname]
+    api_serv_dict = (duthost.host.options['variable_manager'].
+                     _hostvars[duthost.hostname]['snappi_api_server'])
+    msg = "Please add user and password for the snappi api server in ansible/lab file."
+    pytest_assert(
+        "user" in api_serv_dict and
+        "password" in api_serv_dict, msg)
+
+    api._username = api_serv_dict['user']
+    api._password = api_serv_dict['password']
     yield api
 
     if getattr(api, 'assistant', None) is not None:
@@ -576,7 +586,9 @@ def snappi_testbed_config(conn_graph_facts, fanout_graph_facts,     # noqa: F811
                                      snappi_ports=snappi_ports)
     pytest_assert(config_result is True, 'Fail to configure L3 interfaces')
 
-    return config, port_config_list
+    yield config, port_config_list
+
+    cleanup_config([duthost], snappi_ports)
 
 
 @pytest.fixture(scope="module")
@@ -1085,8 +1097,7 @@ def create_ip_list(value, count, mask=32, incr=0):
 
 def cleanup_config(duthost_list, snappi_ports):
 
-    if (duthost_list[0].facts['asic_type'] == "cisco-8000" and
-            duthost_list[0].get_facts().get("modular_chassis", None)):
+    if duthost_list[0].facts['asic_type'] == "cisco-8000":
         global DEST_TO_GATEWAY_MAP
         copy_DEST_TO_GATEWAY_MAP = copy(DEST_TO_GATEWAY_MAP)
         for addr in copy_DEST_TO_GATEWAY_MAP:
@@ -1103,7 +1114,8 @@ def cleanup_config(duthost_list, snappi_ports):
         port_count = len(snappi_ports)
         dutIps = create_ip_list(dut_ip_start, port_count, mask=prefix_length)
         for port in snappi_ports:
-            if port['peer_device'] == duthost.hostname and port['intf_config_changed']:
+            if (port['peer_device'] == duthost.hostname and
+                    'intf_config_changed' in port and port['intf_config_changed']):
                 port_id = port['port_id']
                 dutIp = dutIps[port_id]
                 logger.info('Removing Configuration on Dut: {} with port {} with ip :{}/{}'.format(

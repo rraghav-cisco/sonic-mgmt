@@ -14,7 +14,7 @@ from tests.common.helpers.parallel import parallel_run
 from tests.common.utilities import wait_until
 from tests.common.platform.interface_utils import check_interface_status_of_up_ports
 from tests.common.snappi_tests.snappi_fixtures import get_snappi_ports_for_rdma, \
-    snappi_dut_base_config, is_snappi_multidut
+    snappi_dut_base_config, is_snappi_multidut, cleanup_config
 from tests.common.snappi_tests.qos_fixtures import reapply_pfcwd, get_pfcwd_config
 from tests.common.snappi_tests.common_helpers import \
         stop_pfcwd, disable_packet_aging, enable_packet_aging
@@ -166,6 +166,7 @@ def setup_ports_and_dut(
         pytest.skip("This test requires at least 2 ports")
     yield (testbed_config, port_config_list, snappi_ports)
 
+    cleanup_config(duthosts, snappi_ports)
     snappi_dut_base_config(duthosts, snappi_ports, snappi_api, setup=False)
 
 
@@ -192,7 +193,6 @@ def reboot_duts(request, localhost):
     def save_config_and_reboot(node, results=None):
         up_bgp_neighbors = node.get_bgp_neighbors_per_asic("established")
         logger.info("Issuing a {} reboot on the dut {}".format(reboot_type, node.hostname))
-        node.shell("mkdir /etc/sonic/orig_configs; mv /etc/sonic/config_db* /etc/sonic/orig_configs/")
         node.shell("sudo config save -y")
         reboot(node, localhost, reboot_type=reboot_type, safe_reboot=True)
         logger.info("Wait until the system is stable")
@@ -206,9 +206,9 @@ def reboot_duts(request, localhost):
     args = set((snappi_ports[0]['duthost'], snappi_ports[1]['duthost']))
     parallel_run(save_config_and_reboot, {}, {}, list(args), timeout=900)
     yield
+    return
 
     def revert_config_and_reload(node, results=None):
-        node.shell("mv /etc/sonic/orig_configs/* /etc/sonic/ ; rmdir /etc/sonic/orig_configs; ")
         config_reload(node, safe_reload=True)
 
     # parallel_run(revert_config_and_reload, {}, {}, list(args), timeout=900)

@@ -215,3 +215,5 @@ def test_snappi(request,
         pytest_assert(deviation <= deviation_thresh,
                       'Expected / Actual # of pkts for flow {}: {} / {}'.
                       format(flow_name, exp_rx_frames, rx_frames))
+
+    cleanup_config(duthosts, get_snappi_ports)
